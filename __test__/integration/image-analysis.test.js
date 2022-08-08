@@ -1,5 +1,9 @@
 const { describe, test, expect } = require('@jest/globals');
 
+const aws = require('aws-sdk');
+aws.config = {
+    region: 'us-east-1',
+}
 const requestMock = require('../mocks/request.json');
 const { main } = require('../../src');
 
@@ -9,7 +13,7 @@ describe('Image analyser', () => {
             statusCode: 200,
             input: {
                 queryStringParameters: {
-                    imageUrl: requestMock.queryStringParameters.imageUrl
+                    imageUrl: requestMock.queryStringParameters.imageUrl,
                 }
             },
             body: {},
