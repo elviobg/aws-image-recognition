@@ -69,7 +69,7 @@ module.exports = class handler {
 
   async main(event) {
     try {
-      const { imageUrl } = event.queryStringParameters;
+      const { imageUrl, confidence } = event.queryStringParameters;
 
       if (!imageUrl) {
         return {
@@ -80,9 +80,12 @@ module.exports = class handler {
           }),
         };
       }
-      const confidence = 90;
+
+      const CONFIDENCE_DEFAULT_VALUE = 90;
+      const confidenceValue = confidence ? confidence : CONFIDENCE_DEFAULT_VALUE;
+      
       const imageBuffer = await this.getImageBuffer(imageUrl);
-      const detected = await this.recognizeImageLabels(imageBuffer, confidence);
+      const detected = await this.recognizeImageLabels(imageBuffer, confidenceValue);
       const labelsInPT = await this.translateText(detected.names);
       this.mergeTranlatedNames(labelsInPT, detected);
       const texts = this.formatResults(detected.items);
