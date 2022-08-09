@@ -80,9 +80,29 @@ module.exports = class handler {
           }),
         };
       }
-
+      
       const CONFIDENCE_DEFAULT_VALUE = 90;
-      const confidenceValue = confidence ? confidence : CONFIDENCE_DEFAULT_VALUE;
+      const confidenceValue = confidence ? parseInt(confidence, 10) : CONFIDENCE_DEFAULT_VALUE;
+      
+      if (isNaN(confidenceValue)) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: "Confidence is not a number",
+            data: [],
+          }),
+        };
+      }
+
+      if (confidenceValue > 100 || confidenceValue <= 0) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: "Invalid Confidence Value",
+            data: [],
+          }),
+        };
+      }
       
       const imageBuffer = await this.getImageBuffer(imageUrl);
       const detected = await this.recognizeImageLabels(imageBuffer, confidenceValue);

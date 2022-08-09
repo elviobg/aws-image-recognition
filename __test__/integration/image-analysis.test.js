@@ -58,7 +58,7 @@ describe('Image analyser', () => {
         }
         const result = await main({queryStringParameters: requestMock.emptyQueryStringParameters});
         expect(result).toStrictEqual(expected);
-    });
+    }, 10000);
     it('Deve dar erro ao receber uma URL inválida - status code 500', async () => {
         const expected = {
             statusCode: 500,
@@ -69,5 +69,38 @@ describe('Image analyser', () => {
         }
         const result = await main({queryStringParameters: requestMock.invalidQueryStringParameters});
         expect(result).toStrictEqual(expected);
-    });
+    }, 10000);
+    it('Deve dar erro ao receber o grau de confiança não numérico - status code 400', async () => {
+        const expected = {
+            statusCode: 400,
+            body: JSON.stringify({ 
+                message: 'Confidence is not a number',
+                data: [] 
+            }),
+        }
+        const result = await main({queryStringParameters: requestMock.queryStringParametersConfidenceNaN});
+        expect(result).toStrictEqual(expected);
+    }, 10000);
+    it('Deve dar erro ao receber o grau de confiança maior que 100 - status code 400', async () => {
+        const expected = {
+            statusCode: 400,
+            body: JSON.stringify({ 
+                message: 'Invalid Confidence Value',
+                data: [] 
+            }),
+        }
+        const result = await main({queryStringParameters: requestMock.queryStringParametersConfidenceInvalidHuge});
+        expect(result).toStrictEqual(expected);
+    }, 10000);
+    it('Deve dar erro ao receber o grau de confiança menor ou igual a 0 - status code 400', async () => {
+        const expected = {
+            statusCode: 400,
+            body: JSON.stringify({ 
+                message: 'Invalid Confidence Value',
+                data: [] 
+            }),
+        }
+        const result = await main({queryStringParameters: requestMock.queryStringParametersConfidenceInvalidSmall});
+        expect(result).toStrictEqual(expected);
+    }, 10000);
 })
