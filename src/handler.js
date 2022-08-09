@@ -26,11 +26,25 @@ module.exports = class handler {
       ({ Confidence }) => Confidence >= confidence
     );
 
-    const names = items.map(({ Name }) => Name).join("; ");
+    const names = items.map(({ Name }) => Name).join(";; ");
     return {
       names,
       items,
     };
+  }
+
+  async translateText(text) {
+    const params = {
+      SourceLanguageCode: "en",
+      TargetLanguageCode: "pt",
+      Text: text,
+    };
+
+    const { TranslatedText } = await this.translatorSvc
+      .translateText(params)
+      .promise();
+
+    return TranslatedText.split(';; ');
   }
 
   async main(event) {
@@ -38,10 +52,12 @@ module.exports = class handler {
     const confidence = 90;
     const imageBuffer = await this.getImageBuffer(imageUrl);
     const detected = await this.recognizeImageLabels(imageBuffer, confidence);
-    console.log(detected);
+    const labelsInPT = await this.translateText(detected.names);
     return {
       statusCode: 200,
-      body: "Done!",
+      body: {
+        data: []
+      },
       input: event,
     };
   }
