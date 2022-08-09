@@ -47,18 +47,35 @@ module.exports = class handler {
     return TranslatedText.split(';; ');
   }
 
+  mergeTranlatedNames(names, originalItems) {
+    for (const index in names) {
+      const currentName = names[index];
+      originalItems.items[index].TranslatedName = currentName
+    }
+  }
+
+  formatResults(items) {
+    const texts = []
+    items.forEach((item) => {
+      texts.push(`${item.Confidence.toFixed(2)}% de chance de ser: ${item.TranslatedName}`);
+    });
+
+    return texts;
+  }
+
   async main(event) {
     const { imageUrl } = event.queryStringParameters;
     const confidence = 90;
     const imageBuffer = await this.getImageBuffer(imageUrl);
     const detected = await this.recognizeImageLabels(imageBuffer, confidence);
     const labelsInPT = await this.translateText(detected.names);
+    this.mergeTranlatedNames(labelsInPT, detected);
+    const texts = this.formatResults(detected.items);
     return {
       statusCode: 200,
       body: {
-        data: []
+        data: texts
       },
-      input: event,
     };
   }
 };
