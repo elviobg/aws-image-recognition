@@ -44,48 +44,62 @@ module.exports = class handler {
       .translateText(params)
       .promise();
 
-    return TranslatedText.split(';; ');
+    return TranslatedText.split(";; ");
   }
 
   mergeTranlatedNames(names, originalItems) {
     for (const index in names) {
       const currentName = names[index];
-      originalItems.items[index].TranslatedName = currentName
+      originalItems.items[index].TranslatedName = currentName;
     }
   }
 
   formatResults(items) {
-    const texts = []
+    const texts = [];
     items.forEach((item) => {
-      texts.push(`${item.Confidence.toFixed(2)}% de chance de ser: ${item.TranslatedName}`);
+      texts.push(
+        `${item.Confidence.toFixed(2)}% de chance de ser: ${
+          item.TranslatedName
+        }`
+      );
     });
 
     return texts;
   }
 
   async main(event) {
-    const { imageUrl } = event.queryStringParameters;
-    if (!imageUrl) {
-      return {
-        statusCode: 400,
-        body: {
-          message: 'Empty IMG field!',
-          data: [],
-        }
+    try {
+      const { imageUrl } = event.queryStringParameters;
+      if (!imageUrl) {
+        return {
+          statusCode: 400,
+          body: {
+            message: "Empty IMG field!",
+            data: [],
+          },
+        };
       }
+      const confidence = 90;
+      const imageBuffer = await this.getImageBuffer(imageUrl);
+      const detected = await this.recognizeImageLabels(imageBuffer, confidence);
+      const labelsInPT = await this.translateText(detected.names);
+      this.mergeTranlatedNames(labelsInPT, detected);
+      const texts = this.formatResults(detected.items);
+      return {
+        statusCode: 200,
+        body: {
+          message: "SUCESS",
+          data: texts,
+        },
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: {
+          message: "Internal Server Error!",
+          data: [],
+        },
+      };
     }
-    const confidence = 90;
-    const imageBuffer = await this.getImageBuffer(imageUrl);
-    const detected = await this.recognizeImageLabels(imageBuffer, confidence);
-    const labelsInPT = await this.translateText(detected.names);
-    this.mergeTranlatedNames(labelsInPT, detected);
-    const texts = this.formatResults(detected.items);
-    return {
-      statusCode: 200,
-      body: {
-        message: 'SUCESS',
-        data: texts
-      },
-    };
   }
 };

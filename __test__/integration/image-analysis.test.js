@@ -28,7 +28,6 @@ describe('Image analyser', () => {
         const result = await main({queryStringParameters: requestMock.queryStringParameters});
         expect(result).toStrictEqual(expected);
     }, 10000);
-
     it('Deve dar erro ao receber um URL vazia - status code 400', async () => {
         const expected = {
             statusCode: 400,
@@ -40,5 +39,15 @@ describe('Image analyser', () => {
         const result = await main({queryStringParameters: requestMock.emptyQueryStringParameters});
         expect(result).toStrictEqual(expected);
     });
-    test.todo('Deve dar erro ao receber uma URL inválida - status code 500');
+    it('Deve dar erro ao receber uma URL inválida - status code 500', async () => {
+        const expected = {
+            statusCode: 500,
+            body: { 
+                message: 'Internal Server Error!',
+                data: [] 
+            },
+        }
+        const result = await main({queryStringParameters: requestMock.invalidQueryStringParameters});
+        expect(result).toStrictEqual(expected);
+    });
 })
