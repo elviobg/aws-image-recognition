@@ -70,13 +70,14 @@ module.exports = class handler {
   async main(event) {
     try {
       const { imageUrl } = event.queryStringParameters;
+
       if (!imageUrl) {
         return {
           statusCode: 400,
-          body: {
+          body: JSON.stringify({
             message: "Empty IMG field!",
             data: [],
-          },
+          }),
         };
       }
       const confidence = 90;
@@ -85,20 +86,23 @@ module.exports = class handler {
       const labelsInPT = await this.translateText(detected.names);
       this.mergeTranlatedNames(labelsInPT, detected);
       const texts = this.formatResults(detected.items);
+      const bodyResult = JSON.stringify({
+        message: "SUCESS",
+        data: texts,
+      });
+
       return {
         statusCode: 200,
-        body: {
-          message: "SUCESS",
-          data: texts,
-        },
+        body: bodyResult,
       };
     } catch (error) {
+      console.error(error.stack);
       return {
         statusCode: 500,
-        body: {
+        body: JSON.stringify({
           message: "Internal Server Error!",
           data: [],
-        },
+        }),
       };
     }
   }

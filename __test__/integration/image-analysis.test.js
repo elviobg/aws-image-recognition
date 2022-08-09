@@ -20,10 +20,10 @@ describe('Image analyser', () => {
         
         const expected = {
             statusCode: 200,
-            body: { 
+            body: JSON.stringify({ 
                 message: 'SUCESS',
                 data: dataBodyPugImage 
-            },
+            }),
         }
         const result = await main({queryStringParameters: requestMock.queryStringParameters});
         expect(result).toStrictEqual(expected);
@@ -31,10 +31,10 @@ describe('Image analyser', () => {
     it('Deve dar erro ao receber um URL vazia - status code 400', async () => {
         const expected = {
             statusCode: 400,
-            body: { 
+            body: JSON.stringify({ 
                 message: 'Empty IMG field!',
                 data: [] 
-            },
+            }),
         }
         const result = await main({queryStringParameters: requestMock.emptyQueryStringParameters});
         expect(result).toStrictEqual(expected);
@@ -42,10 +42,10 @@ describe('Image analyser', () => {
     it('Deve dar erro ao receber uma URL inválida - status code 500', async () => {
         const expected = {
             statusCode: 500,
-            body: { 
+            body: JSON.stringify({ 
                 message: 'Internal Server Error!',
                 data: [] 
-            },
+            }),
         }
         const result = await main({queryStringParameters: requestMock.invalidQueryStringParameters});
         expect(result).toStrictEqual(expected);
