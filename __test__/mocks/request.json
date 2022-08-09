@@ -1,5 +1,11 @@
 {
     "queryStringParameters": {
         "imageUrl": "https://www.ative.pet/wp-content/uploads/2020/12/original-a3cc9078fd7c7869773ed4299205549c-scaled-2560x1280.jpeg"
+    },
+    "invalidQueryStringParameters": {
+        "imageUrl": "https://static.nationalgeographicbrasil.com/files/styles/image_3200/public/01-amored-animals-nationalgeographic_1159498.webp?w=1450&h=816"
+    },
+    "emptyQueryStringParameters": {
+        "imageUrl": ""
     }
 }

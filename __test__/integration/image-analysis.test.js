@@ -21,12 +21,24 @@ describe('Image analyser', () => {
         const expected = {
             statusCode: 200,
             body: { 
+                message: 'SUCESS',
                 data: dataBodyPugImage 
             },
         }
-        const result = await main(requestMock);
+        const result = await main({queryStringParameters: requestMock.queryStringParameters});
         expect(result).toStrictEqual(expected);
     }, 10000);
-    test.todo('Deve dar erro ao receber um URL vazia - status code 400');
+
+    it('Deve dar erro ao receber um URL vazia - status code 400', async () => {
+        const expected = {
+            statusCode: 400,
+            body: { 
+                message: 'Empty IMG field!',
+                data: [] 
+            },
+        }
+        const result = await main({queryStringParameters: requestMock.emptyQueryStringParameters});
+        expect(result).toStrictEqual(expected);
+    });
     test.todo('Deve dar erro ao receber uma URL inválida - status code 500');
 })

@@ -65,6 +65,15 @@ module.exports = class handler {
 
   async main(event) {
     const { imageUrl } = event.queryStringParameters;
+    if (!imageUrl) {
+      return {
+        statusCode: 400,
+        body: {
+          message: 'Empty IMG field!',
+          data: [],
+        }
+      }
+    }
     const confidence = 90;
     const imageBuffer = await this.getImageBuffer(imageUrl);
     const detected = await this.recognizeImageLabels(imageBuffer, confidence);
@@ -74,6 +83,7 @@ module.exports = class handler {
     return {
       statusCode: 200,
       body: {
+        message: 'SUCESS',
         data: texts
       },
     };
